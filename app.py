@@ -1,115 +1,76 @@
-import os
-import numpy as np
+
+import streamlit as st
 import tensorflow as tf
-from flask import Flask, request, render_template_string
+import numpy as np
 from PIL import Image
+from pathlib import Path
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
-app = Flask(__name__)
-
-MODEL_PATH = os.path.join(
-    os.path.dirname(__file__), "roadguard_final.keras"
+st.set_page_config(
+    page_title="RoadGuard AI",
+    page_icon="🛣️",
+    layout="centered"
 )
 
-model = tf.keras.models.load_model(MODEL_PATH)
+st.title("🛣️ RoadGuard AI")
+st.subheader("AI-Powered Road Damage Classification")
+st.write(
+    "Upload a road image to classify it as damaged "
+    "or not damaged using our trained MobileNetV2 model."
+)
 
-PAGE = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>RoadGuard AI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #101827;
-            color: white;
-            text-align: center;
-            padding: 35px 15px;
-        }
-        .card {
-            max-width: 520px;
-            margin: 30px auto;
-            padding: 28px;
-            background: #1e293b;
-            border-radius: 16px;
-        }
-        input, button {
-            margin: 15px 0;
-            padding: 12px;
-            max-width: 100%;
-        }
-        button {
-            background: #38bdf8;
-            border: 0;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .result { color: #7dd3fc; font-size: 22px; }
-        .note { color: #cbd5e1; font-size: 14px; }
-    </style>
-</head>
-<body>
-    <h1>RoadGuard AI</h1>
-    <p>AI-powered Road Damage Classification</p>
-    <div class="card">
-        <h2>Upload a Road Image</h2>
-        <form method="POST" enctype="multipart/form-data">
-            <input type="file" name="image"
-                   accept="image/*" required>
-            <br>
-            <button type="submit">Analyze Road</button>
-        </form>
-        {% if result %}
-            <h2 class="result">{{ result }}</h2>
-            <p>Model damage score: {{ score }}</p>
-        {% endif %}
-        {% if error %}
-            <p>{{ error }}</p>
-        {% endif %}
-        <p class="note">
-            This is an academic prototype. Predictions may be incorrect
-            and should be reviewed by a person.
-        </p>
-    </div>
-</body>
-</html>
-"""
+MODEL_PATH = Path(__file__).parent / "roadguard_final.keras"
 
-@app.route("/", methods=["GET", "POST"])
-def home():
-    result = None
-    score_text = None
-    error = None
+@st.cache_resource
+def load_model():
+    if not MODEL_PATH.exists():
+        raise FileNotFoundError(
+            "Model file roadguard_final.keras is missing."
+        )
+    return tf.keras.models.load_model(MODEL_PATH)
 
-    if request.method == "POST":
-        uploaded = request.files.get("image")
+uploaded_file = st.file_uploader(
+    "Upload a road image",
+    type=["jpg", "jpeg", "png"]
+)
 
-        if not uploaded or not uploaded.filename:
-            error = "Please select an image."
-        else:
-            try:
-                image = Image.open(uploaded.stream).convert("RGB")
-                image = image.resize((224, 224))
+if uploaded_file is not None:
+    try:
+        image = Image.open(uploaded_file).convert("RGB")
+        st.image(image, caption="Uploaded road image",
+                 use_container_width=True)
 
-                array = np.asarray(image, dtype=np.float32)
+        if st.button("Analyze Road", type="primary"):
+            with st.spinner("Analyzing image..."):
+                model = load_model()
+                resized = image.resize((224, 224))
+                array = np.asarray(resized, dtype=np.float32)
                 batch = preprocess_input(
                     np.expand_dims(array, axis=0)
                 )
+                score = float(
+                    model.predict(batch, verbose=0)[0][0]
+                )
 
-                score = float(model.predict(batch, verbose=0)[0][0])
+            st.metric("Model damage score", f"{score:.2%}")
 
-                if score >= 0.5:
-                    result = "ROAD DAMAGE DETECTED"
-                else:
-                    result = "NO ROAD DAMAGE DETECTED"
+            if score >= 0.5:
+                st.error("🚧 ROAD DAMAGE DETECTED")
+            else:
+                st.success("✅ NO ROAD DAMAGE DETECTED")
 
-                score_text = f"{score:.2%} (not a calibrated probability)"
+            st.caption(
+                "The score is not a calibrated probability. "
+                "Predictions can be incorrect and should be "
+                "reviewed by a person."
+            )
 
-            except Exception:
-                error = "Unable to process this image. Please try another."
+    except Exception as e:
+        st.error("Unable to analyze this image.")
+        st.exception(e)
 
-    return render_template_string(
-        PAGE, result=result, score=score_text, error=error
-    )
+st.divider()
+st.caption(
+    "Academic prototype | Binary image classification | "
+    "MobileNetV2"
+)
