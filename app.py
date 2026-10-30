@@ -93,7 +93,7 @@ hr { border-color:#1b394e; }
 # Top brand and navigation
 nav1, nav2 = st.columns([1.2, 3.8], vertical_alignment="center")
 with nav1:
-    st.markdown('<div class="brand">🛣️ RoadGuard <span>AI</span><div class="brandtag">SEE THE ROAD. DETECT THE RISK.</div></div>', unsafe_allow_html=True)import random
+   st.markdown('<div class="brand">🛣️ RoadGuard <span>AI</span><div class="brandtag">SEE THE ROAD. DETECT THE RISK.</div></div>', unsafe_allow_html=True)
 import time
 from pathlib import Path
 
