@@ -1,4 +1,195 @@
-with nav2:
+import random
+import time
+from pathlib import Path
+
+import numpy as np
+import streamlit as st
+import tensorflow as tf
+from PIL import Image
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+
+# ------------------------------------------------------------
+# ROADGUARD AI — Bolt-inspired Streamlit frontend
+# Actual inference is performed by roadguard_final.keras.
+# ------------------------------------------------------------
+st.set_page_config(
+    page_title="RoadGuard AI | Intelligent Road Inspection",
+    page_icon="🛣️",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+MODEL_PATH = Path(__file__).parent / "roadguard_final.keras"
+THRESHOLD = 0.50
+
+ROAD_VIEWS = [
+    ("Mountain Highway", "Northern Pakistan inspired", "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2000&q=85"),
+    ("Open Road", "Scenic highway landscape", "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=85"),
+    ("Highland Route", "Mountain road landscape", "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=2000&q=85"),
+    ("Road Journey", "Open-road scenery", "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=2000&q=85"),
+]
+if "road_view" not in st.session_state:
+    st.session_state.road_view = random.randrange(len(ROAD_VIEWS))
+if "page" not in st.session_state:
+    st.session_state.page = "Dashboard"
+
+@st.cache_resource
+def load_model():
+    if not MODEL_PATH.exists():
+        raise FileNotFoundError("roadguard_final.keras must be in the same GitHub folder as app.py.")
+    return tf.keras.models.load_model(MODEL_PATH, compile=False)
+
+def predict_image(image: Image.Image):
+    model = load_model()
+    resized = image.convert("RGB").resize((224, 224))
+    arr = np.asarray(resized, dtype=np.float32)
+    batch = preprocess_input(np.expand_dims(arr, axis=0))
+    start = time.perf_counter()
+    output = model.predict(batch, verbose=0)
+    elapsed = (time.perf_counter() - start) * 1000
+    score = float(np.asarray(output).reshape(-1)[0])
+    return score, elapsed
+
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root { --bg:#07111d; --panel:#0c1b2b; --panel2:#10243a; --line:#1d3a50; --cyan:#36d9e8; --lime:#c7f36b; --muted:#9db1c3; }
+.stApp { background:radial-gradient(ellipse at 80% -10%,#163650 0%,transparent 38%),linear-gradient(145deg,#050c15,#081827 55%,#07111d); color:#edf6fb; font-family:'DM Sans',sans-serif; }
+[data-testid="stHeader"] { background:transparent; }
+.block-container { max-width:1420px; padding-top:1.2rem; padding-bottom:2.8rem; }
+h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif!important; color:#f4f8fb; letter-spacing:-.6px; }
+p,li,label,span,div { font-family:'DM Sans',sans-serif; }
+div[data-testid="stMarkdownContainer"] p { color:#bdcbd6; }
+.topbar { display:flex; justify-content:space-between; align-items:center; padding:13px 18px; border:1px solid #1b3b50; border-radius:16px; background:rgba(8,23,37,.88); margin-bottom:22px; }
+.brand { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:23px; color:#f5fbff; letter-spacing:-1px; }
+.brand span { color:var(--cyan); }
+.brandtag { color:#87a2b7; font-size:10px; letter-spacing:2px; font-weight:700; margin-top:2px; }
+.status { color:#c7f36b; font-size:12px; font-weight:700; border:1px solid #49623a; background:#17291c; border-radius:30px; padding:7px 12px; }
+.hero { border:1px solid #2a5066; border-radius:24px; padding:36px 38px; min-height:285px; background-size:cover; background-position:center; position:relative; overflow:hidden; box-shadow:0 20px 60px #0005; }
+.eyebrow { color:#61e4e7; font-size:11px; font-weight:800; letter-spacing:2.2px; text-transform:uppercase; }
+.hero h1 { font-size:clamp(38px,5vw,66px); line-height:1.02; font-weight:800; margin:14px 0 12px; color:white; }
+.hero h1 span { color:var(--cyan); }
+.hero p { max-width:650px; color:#d5e4ee!important; font-size:16px; line-height:1.75; }
+.hero-foot { color:#b9d1df; font-size:11px; letter-spacing:1px; margin-top:20px; }
+.panel { background:linear-gradient(145deg,rgba(16,37,57,.96),rgba(8,23,38,.97)); border:1px solid var(--line); border-radius:19px; padding:22px; box-shadow:0 12px 35px #0002; }
+.section-kicker { color:var(--cyan); font-size:11px; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; }
+.muted { color:var(--muted); font-size:13px; line-height:1.7; }
+.result-damage { border:1px solid #a94c4c; background:linear-gradient(135deg,#351c25,#1b1b2a); border-radius:18px; padding:22px; }
+.result-safe { border:1px solid #5b8b4d; background:linear-gradient(135deg,#1c3428,#102b2c); border-radius:18px; padding:22px; }
+div.stButton>button { border-radius:12px; min-height:45px; border:1px solid #1da9c4; background:linear-gradient(100deg,#087fae,#12b9c8); color:white; font-weight:800; transition:.2s; }
+div.stButton>button:hover { border-color:#8af4ed; color:white; transform:translateY(-1px); box-shadow:0 8px 24px #0aaac533; }
+div.stButton>button[kind="secondary"] { background:#10263a; border:1px solid #29485f; }
+[data-testid="stFileUploader"] { border:1px dashed #34718a; border-radius:14px; background:#071827; padding:12px; }
+[data-testid="stMetric"] { background:#0d2134; border:1px solid #24455d; border-radius:14px; padding:13px; }
+[data-testid="stMetricLabel"] { color:#a9bfce!important; }
+[data-testid="stImage"] img { border-radius:14px; }
+[data-testid="stRadio"] > div { gap:7px; }
+[data-testid="stRadio"] label { background:#0d2134; border:1px solid #1d3d53; border-radius:11px; padding:8px 13px; }
+hr { border-color:#1b394e; }
+.footer { text-align:center; color:#829caf; border-top:1px solid #1b394e; padding:22px 0 5px; font-size:11px; }
+</style>
+""", unsafe_allow_html=True)
+
+# Top brand and navigation
+nav1, nav2 = st.columns([1.2, 3.8], vertical_alignment="center")
+with nav1:
+    st.markdown('<div class="brand">🛣️ RoadGuard <span>AI</span><div class="brandtag">SEE THE ROAD. DETECT THE RISK.</div></div>', unsafe_allow_html=True)import random
+import time
+from pathlib import Path
+
+import numpy as np
+import streamlit as st
+import tensorflow as tf
+from PIL import Image
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+
+# ------------------------------------------------------------
+# ROADGUARD AI — Bolt-inspired Streamlit frontend
+# Actual inference is performed by roadguard_final.keras.
+# ------------------------------------------------------------
+st.set_page_config(
+    page_title="RoadGuard AI | Intelligent Road Inspection",
+    page_icon="🛣️",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+MODEL_PATH = Path(__file__).parent / "roadguard_final.keras"
+THRESHOLD = 0.50
+
+ROAD_VIEWS = [
+    ("Mountain Highway", "Northern Pakistan inspired", "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2000&q=85"),
+    ("Open Road", "Scenic highway landscape", "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=85"),
+    ("Highland Route", "Mountain road landscape", "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=2000&q=85"),
+    ("Road Journey", "Open-road scenery", "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=2000&q=85"),
+]
+if "road_view" not in st.session_state:
+    st.session_state.road_view = random.randrange(len(ROAD_VIEWS))
+if "page" not in st.session_state:
+    st.session_state.page = "Dashboard"
+
+@st.cache_resource
+def load_model():
+    if not MODEL_PATH.exists():
+        raise FileNotFoundError("roadguard_final.keras must be in the same GitHub folder as app.py.")
+    return tf.keras.models.load_model(MODEL_PATH, compile=False)
+
+def predict_image(image: Image.Image):
+    model = load_model()
+    resized = image.convert("RGB").resize((224, 224))
+    arr = np.asarray(resized, dtype=np.float32)
+    batch = preprocess_input(np.expand_dims(arr, axis=0))
+    start = time.perf_counter()
+    output = model.predict(batch, verbose=0)
+    elapsed = (time.perf_counter() - start) * 1000
+    score = float(np.asarray(output).reshape(-1)[0])
+    return score, elapsed
+
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root { --bg:#07111d; --panel:#0c1b2b; --panel2:#10243a; --line:#1d3a50; --cyan:#36d9e8; --lime:#c7f36b; --muted:#9db1c3; }
+.stApp { background:radial-gradient(ellipse at 80% -10%,#163650 0%,transparent 38%),linear-gradient(145deg,#050c15,#081827 55%,#07111d); color:#edf6fb; font-family:'DM Sans',sans-serif; }
+[data-testid="stHeader"] { background:transparent; }
+.block-container { max-width:1420px; padding-top:1.2rem; padding-bottom:2.8rem; }
+h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif!important; color:#f4f8fb; letter-spacing:-.6px; }
+p,li,label,span,div { font-family:'DM Sans',sans-serif; }
+div[data-testid="stMarkdownContainer"] p { color:#bdcbd6; }
+.topbar { display:flex; justify-content:space-between; align-items:center; padding:13px 18px; border:1px solid #1b3b50; border-radius:16px; background:rgba(8,23,37,.88); margin-bottom:22px; }
+.brand { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:23px; color:#f5fbff; letter-spacing:-1px; }
+.brand span { color:var(--cyan); }
+.brandtag { color:#87a2b7; font-size:10px; letter-spacing:2px; font-weight:700; margin-top:2px; }
+.status { color:#c7f36b; font-size:12px; font-weight:700; border:1px solid #49623a; background:#17291c; border-radius:30px; padding:7px 12px; }
+.hero { border:1px solid #2a5066; border-radius:24px; padding:36px 38px; min-height:285px; background-size:cover; background-position:center; position:relative; overflow:hidden; box-shadow:0 20px 60px #0005; }
+.eyebrow { color:#61e4e7; font-size:11px; font-weight:800; letter-spacing:2.2px; text-transform:uppercase; }
+.hero h1 { font-size:clamp(38px,5vw,66px); line-height:1.02; font-weight:800; margin:14px 0 12px; color:white; }
+.hero h1 span { color:var(--cyan); }
+.hero p { max-width:650px; color:#d5e4ee!important; font-size:16px; line-height:1.75; }
+.hero-foot { color:#b9d1df; font-size:11px; letter-spacing:1px; margin-top:20px; }
+.panel { background:linear-gradient(145deg,rgba(16,37,57,.96),rgba(8,23,38,.97)); border:1px solid var(--line); border-radius:19px; padding:22px; box-shadow:0 12px 35px #0002; }
+.section-kicker { color:var(--cyan); font-size:11px; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; }
+.muted { color:var(--muted); font-size:13px; line-height:1.7; }
+.result-damage { border:1px solid #a94c4c; background:linear-gradient(135deg,#351c25,#1b1b2a); border-radius:18px; padding:22px; }
+.result-safe { border:1px solid #5b8b4d; background:linear-gradient(135deg,#1c3428,#102b2c); border-radius:18px; padding:22px; }
+div.stButton>button { border-radius:12px; min-height:45px; border:1px solid #1da9c4; background:linear-gradient(100deg,#087fae,#12b9c8); color:white; font-weight:800; transition:.2s; }
+div.stButton>button:hover { border-color:#8af4ed; color:white; transform:translateY(-1px); box-shadow:0 8px 24px #0aaac533; }
+div.stButton>button[kind="secondary"] { background:#10263a; border:1px solid #29485f; }
+[data-testid="stFileUploader"] { border:1px dashed #34718a; border-radius:14px; background:#071827; padding:12px; }
+[data-testid="stMetric"] { background:#0d2134; border:1px solid #24455d; border-radius:14px; padding:13px; }
+[data-testid="stMetricLabel"] { color:#a9bfce!important; }
+[data-testid="stImage"] img { border-radius:14px; }
+[data-testid="stRadio"] > div { gap:7px; }
+[data-testid="stRadio"] label { background:#0d2134; border:1px solid #1d3d53; border-radius:11px; padding:8px 13px; }
+hr { border-color:#1b394e; }
+.footer { text-align:center; color:#829caf; border-top:1px solid #1b394e; padding:22px 0 5px; font-size:11px; }
+</style>
+""", unsafe_allow_html=True)
+
+# Top brand and navigation
+nav1, nav2 = st.columns([1.2, 3.8], vertical_alignment="center")
+with nav1:
+    st.markdown('<div class="brand">🛣️ RoadGuard <span>AI</span><div class="brandtag">SEE THE ROAD. DETECT THE RISK.</div></div>', unsafe_allow_html=True)
+    with nav2:
     st.session_state.page = st.radio(
         "Navigation",
         ["Dashboard", "How It Works", "About Project", "Model Information"],
