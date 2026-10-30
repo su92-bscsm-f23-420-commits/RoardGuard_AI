@@ -54,194 +54,149 @@ def predict_image(image: Image.Image):
     score = float(np.asarray(output).reshape(-1)[0])
     return score, elapsed
 
+# Enhanced Modern CSS Styling
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Space+Grotesk:wght@500;600;700&display=swap');
+
 :root {
-  --ink:#18364a; --ink2:#274b62; --muted:#58778b;
-  --blue:#78c9e8; --blue2:#b9e7f6; --line:rgba(91,157,190,.25);
-  --glass:rgba(255,255,255,.76); --glass-strong:rgba(255,255,255,.90);
+  --ink: #0f2330;
+  --ink2: #1b384b;
+  --muted: #4e6c80;
+  --blue-accent: #0098db;
+  --blue-light: #e0f4fc;
+  --border-subtle: rgba(111, 177, 207, 0.22);
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-strong: rgba(255, 255, 255, 0.95);
+  --shadow-smooth: 0 16px 40px rgba(40, 98, 128, 0.08);
 }
+
 .stApp {
-  background:
-    radial-gradient(ellipse at 12% 0%,rgba(174,226,247,.72),transparent 38%),
-    radial-gradient(ellipse at 92% 16%,rgba(208,239,250,.9),transparent 35%),
-    linear-gradient(145deg,#f8fcff 0%,#eaf6fc 48%,#f5fbff 100%);
-  color:var(--ink); font-family:'DM Sans',sans-serif;
+  background: 
+    radial-gradient(circle at 10% 0%, rgba(150, 220, 248, 0.65), transparent 40%),
+    radial-gradient(circle at 90% 15%, rgba(195, 235, 252, 0.8), transparent 35%),
+    linear-gradient(135deg, #f4f9fd 0%, #e6f3fb 50%, #f0f7fc 100%);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
 }
-[data-testid="stHeader"] { background:transparent; }
-.block-container { max-width:1420px; padding-top:1.2rem; padding-bottom:2.8rem; }
-h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif!important; color:var(--ink)!important; letter-spacing:-.6px; }
-p,li,label,span,div { font-family:'DM Sans',sans-serif; }
-div[data-testid="stMarkdownContainer"] p { color:var(--muted); }
+
+[data-testid="stHeader"] { 
+  background: transparent; 
+}
+
+.block-container { 
+  max-width: 1400px; 
+  padding-top: 1.5rem; 
+  padding-bottom: 3.5rem; 
+}
+
+h1, h2, h3, h4 { 
+  font-family: 'Space Grotesk', sans-serif !important; 
+  color: var(--ink) !important; 
+  letter-spacing: -0.7px; 
+}
+
+p, li, label, span, div { 
+  font-family: 'DM Sans', sans-serif; 
+}
+
+div[data-testid="stMarkdownContainer"] p { 
+  color: var(--muted); 
+}
+
+/* Top Navigation Bar */
 .topbar {
-  display:flex; justify-content:space-between; align-items:center; padding:13px 18px;
-  border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.68);
-  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-  margin-bottom:22px; box-shadow:0 8px 28px rgba(53,117,148,.08);
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 14px 22px;
+  border: 1px solid var(--border-subtle); 
+  border-radius: 18px; 
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px); 
+  -webkit-backdrop-filter: blur(18px);
+  margin-bottom: 24px; 
+  box-shadow: var(--shadow-smooth);
 }
-.brand { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:23px; color:var(--ink); letter-spacing:-1px; }
-.brand span { color:#2699c5; }
-.brandtag { color:#648397; font-size:10px; letter-spacing:2px; font-weight:700; margin-top:2px; }
-.status { color:#23799b; font-size:12px; font-weight:700; border:1px solid #b5deed; background:#e8f7fc; border-radius:30px; padding:7px 12px; }
+
+.brand { 
+  font-family: 'Space Grotesk', sans-serif; 
+  font-weight: 800; 
+  font-size: 24px; 
+  color: var(--ink); 
+  letter-spacing: -0.8px; 
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand span { 
+  color: var(--blue-accent); 
+}
+.brandtag { 
+  color: #53778d; 
+  font-size: 9px; 
+  letter-spacing: 2.5px; 
+  font-weight: 700; 
+  margin-top: 3px; 
+  text-transform: uppercase;
+}
+
+.status { 
+  color: #0b688c; 
+  font-size: 11px; 
+  font-weight: 800; 
+  border: 1px solid #a8dbec; 
+  background: #def3fb; 
+  border-radius: 30px; 
+  padding: 6px 14px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Hero Banner */
 .hero {
-  border:1px solid rgba(255,255,255,.65); border-radius:24px; padding:36px 38px; min-height:285px;
-  background-size:cover; background-position:center; position:relative; overflow:hidden;
-  box-shadow:0 20px 55px rgba(48,111,143,.16);
+  border: 1px solid rgba(255, 255, 255, 0.7); 
+  border-radius: 26px; 
+  padding: 42px 46px; 
+  min-height: 310px;
+  background-size: cover; 
+  background-position: center; 
+  position: relative; 
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(35, 92, 121, 0.18);
+  margin-bottom: 24px;
 }
-.eyebrow { color:#a8eaff; font-size:11px; font-weight:800; letter-spacing:2.2px; text-transform:uppercase; }
-.hero h1 { font-size:clamp(38px,5vw,66px); line-height:1.02; font-weight:800; margin:14px 0 12px; color:white!important; }
-.hero h1 span { color:#a8eaff; }
-.hero p { max-width:650px; color:#edf8ff!important; font-size:16px; line-height:1.75; }
-.hero-foot { color:#d6effa; font-size:11px; letter-spacing:1px; margin-top:20px; }
-.panel {
-  background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(239,249,254,.76));
-  border:1px solid rgba(111,177,207,.28); border-radius:19px; padding:22px;
-  box-shadow:0 12px 35px rgba(51,112,143,.08); backdrop-filter:blur(14px);
+
+.eyebrow { 
+  color: #9fe2ff; 
+  font-size: 11px; 
+  font-weight: 800; 
+  letter-spacing: 2.5px; 
+  text-transform: uppercase; 
 }
-.section-kicker { color:#258eb8; font-size:11px; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; }
-.muted { color:var(--muted); font-size:13px; line-height:1.7; }
-.result-damage { border:1px solid #efb6b6; background:linear-gradient(135deg,#fff1f1,#fffafa); border-radius:18px; padding:22px; }
-.result-safe { border:1px solid #b8dfc5; background:linear-gradient(135deg,#effaf2,#fbfffc); border-radius:18px; padding:22px; }
-div.stButton>button {
-  border-radius:12px; min-height:45px; border:1px solid #70bfdf;
-  background:linear-gradient(100deg,#5ab5dc,#8bd7ec); color:#123b52; font-weight:800; transition:.2s;
+
+.hero h1 { 
+  font-size: clamp(36px, 4.8vw, 62px); 
+  line-height: 1.05; 
+  font-weight: 800; 
+  margin: 12px 0 14px; 
+  color: white !important; 
 }
-div.stButton>button:hover { border-color:#3b9fc8; color:#123b52; transform:translateY(-1px); box-shadow:0 8px 24px rgba(65,163,203,.22); }
-div.stButton>button[kind="secondary"] { background:rgba(255,255,255,.78); border:1px solid #b8dce9; color:#28546c; }
-[data-testid="stFileUploader"] {
-  border:1px dashed #8fc8df; border-radius:14px; background:rgba(255,255,255,.66);
-  padding:12px;
+
+.hero h1 span { 
+  color: #8ce1ff; 
 }
-[data-testid="stMetric"] { background:rgba(255,255,255,.78); border:1px solid #c7e4ef; border-radius:14px; padding:13px; }
-[data-testid="stMetricLabel"] { color:#58778b!important; }
-[data-testid="stMetricValue"] { color:#18364a!important; }
-[data-testid="stImage"] img { border-radius:14px; }
-[data-testid="stRadio"] > div { gap:7px; }
-[data-testid="stRadio"] label { background:rgba(255,255,255,.76); border:1px solid #c5e2ed; border-radius:11px; padding:8px 13px; }
-[data-testid="stCaptionContainer"] p { color:#68879a!important; }
-hr { border-color:#c9e3ed; }
-.footer { text-align:center; color:#6c899b; border-top:1px solid #c9e3ed; padding:22px 0 5px; font-size:11px; }
-</style>
-""", unsafe_allow_html=True)
 
-# Top brand and navigation
-nav1, nav2 = st.columns([1.2, 3.8], vertical_alignment="center")
-with nav1:
-    st.markdown('<div class="brand">🛣️ RoadGuard <span>AI</span><div class="brandtag">SEE THE ROAD. DETECT THE RISK.</div></div>', unsafe_allow_html=True)
-with nav2:
-    st.session_state.page = st.radio(
-        "Navigation",
-        ["Dashboard", "How It Works", "About Project", "Model Information"],
-        horizontal=True,
-        label_visibility="collapsed",
-        index=["Dashboard", "How It Works", "About Project", "Model Information"].index(st.session_state.page),
-    )
-st.markdown('<div class="topbar"><span style="color:#9db4c5;font-size:12px">DEEP LEARNING · ROAD CONDITION CLASSIFICATION</span><span class="status">● MODEL APP</span></div>', unsafe_allow_html=True)
+.hero p { 
+  max-width: 620px; 
+  color: #e6f5ff !important; 
+  font-size: 16px; 
+  line-height: 1.7; 
+}
 
-page = st.session_state.page
-
-if page == "Dashboard":
-    view = ROAD_VIEWS[st.session_state.road_view]
-    st.markdown(f"""
-    <div class="hero" style="background-image:linear-gradient(90deg,rgba(13,43,61,.82),rgba(18,58,79,.55) 58%,rgba(20,66,88,.18)),url('{view[2]}')">
-      <div class="eyebrow">✦ AI-POWERED ROAD INTELLIGENCE</div>
-      <h1>Smarter roads.<br><span>Safer journeys.</span></h1>
-      <p>Upload a road image and let our trained deep-learning classifier assess whether the image shows road damage.</p>
-      <div class="hero-foot">PAKISTAN CITY THEME · {view[0].upper()} &nbsp; / &nbsp; {view[1].upper()}</div>
-    </div>
-    """, unsafe_allow_html=True)
-    ch1, ch2, _ = st.columns([1.25, 1.35, 3.4])
-    with ch1:
-        if st.button("↻ Change road background", use_container_width=True):
-            st.session_state.road_view = random.choice([i for i in range(len(ROAD_VIEWS)) if i != st.session_state.road_view])
-            st.rerun()
-    with ch2:
-        st.caption("City labels are Pakistan-focused themes; background photos are illustrative, not verified photos from those cities.")
-    st.markdown("")
-    st.markdown('<div class="section-kicker">01 / IMAGE INSPECTION</div>', unsafe_allow_html=True)
-    left, right = st.columns([1, 1.08], gap="large")
-    image = None
-    with left:
-        st.markdown("### Upload your road image")
-        st.markdown('<div class="muted">Choose a clear JPG, JPEG or PNG photo showing the road surface. The image is analyzed by the deployed Keras model.</div>', unsafe_allow_html=True)
-        uploaded = st.file_uploader("Choose image", type=["jpg", "jpeg", "png"], key="bolt_road_upload")
-        if uploaded:
-            try:
-                image = Image.open(uploaded).convert("RGB")
-            except Exception:
-                st.error("Unable to open this file. Please upload a valid image.")
-        st.markdown('<div class="muted">Tip: a clear road-surface image generally gives the classifier more useful visual information.</div>', unsafe_allow_html=True)
-    with right:
-        st.markdown("### Image preview")
-        if image is not None:
-            st.image(image, use_container_width=True, caption="Selected road image")
-        else:
-            st.markdown('<div class="panel" style="text-align:center;padding:65px 18px"><div style="font-size:46px">⌁</div><h3>Ready for inspection</h3><div class="muted">Your uploaded image preview will appear here.</div></div>', unsafe_allow_html=True)
-    st.markdown("")
-    run = st.button("✦  ANALYZE ROAD IMAGE", type="primary", use_container_width=True, disabled=image is None)
-    if run and image is not None:
-        try:
-            with st.spinner("Running the trained RoadGuard AI model..."):
-                score, elapsed = predict_image(image)
-            st.markdown("---")
-            st.markdown('<div class="section-kicker">02 / CLASSIFICATION REPORT</div>', unsafe_allow_html=True)
-            c1, c2 = st.columns([1.15, 1], gap="large")
-            with c1:
-                if score >= THRESHOLD:
-                    st.markdown(f'<div class="result-damage"><div class="eyebrow" style="color:#ff9b9b">⚠ CLASSIFICATION RESULT</div><h2 style="margin:12px 0;color:#fff">Road damage detected</h2><p>The trained model classified this image as the damage class.</p></div>', unsafe_allow_html=True)
-                else:
-                    st.markdown(f'<div class="result-safe"><div class="eyebrow" style="color:#c7f36b">✓ CLASSIFICATION RESULT</div><h2 style="margin:12px 0;color:#fff">No road damage detected</h2><p>The trained model classified this image as the no-damage class.</p></div>', unsafe_allow_html=True)
-            with c2:
-                st.markdown('<div class="panel">', unsafe_allow_html=True)
-                st.metric("Damage-class model score", f"{score:.1%}")
-                st.metric("Inference time", f"{elapsed:.0f} ms")
-                st.progress(min(max(score, 0.0), 1.0))
-                st.caption("Decision threshold: 50%. Score is not a calibrated probability.")
-                st.markdown('</div>', unsafe_allow_html=True)
-            st.info("This is whole-image binary classification. It does not draw bounding boxes or identify damage location, type, or severity. Human review is recommended.")
-        except Exception as exc:
-            st.error("Prediction failed. Check the model file and Streamlit logs.")
-            st.exception(exc)
-    st.markdown("---")
-    st.markdown("### Built for smarter road awareness")
-    a,b,c = st.columns(3)
-    with a:
-        st.markdown('<div class="panel"><div class="section-kicker">01 / DEEP LEARNING</div><h3>MobileNetV2</h3><div class="muted">A trained image-classification model powers the prediction.</div></div>', unsafe_allow_html=True)
-    with b:
-        st.markdown('<div class="panel"><div class="section-kicker">02 / SIMPLE INPUT</div><h3>Image-based</h3><div class="muted">Upload a road photo to receive a binary classification.</div></div>', unsafe_allow_html=True)
-    with c:
-        st.markdown('<div class="panel"><div class="section-kicker">03 / CLEAR OUTPUT</div><h3>Explainable result</h3><div class="muted">View the damage score and inference time for each prediction.</div></div>', unsafe_allow_html=True)
-
-elif page == "How It Works":
-    st.markdown('<div class="hero"><div class="eyebrow">THE PROCESS</div><h1>How it <span style="color:#36d9e8">works.</span></h1><p>From a road image to a model classification in a few simple steps.</p></div>', unsafe_allow_html=True)
-    steps = [
-        ("01","Upload image","Select a JPG or PNG road photograph."),
-        ("02","Preprocessing","The image is converted to RGB, resized to 224 × 224 pixels and processed using MobileNetV2 preprocessing."),
-        ("03","AI inference","The trained Keras model analyzes the image and returns one sigmoid score."),
-        ("04","Classification","The app applies a 0.50 threshold to classify the image as damage or no damage."),
-        ("05","View result","The interface displays the predicted class, model score and inference time."),
-    ]
-    for n,t,d in steps:
-        st.markdown(f'<div class="panel" style="margin:12px 0"><div class="section-kicker">STEP {n}</div><h3>{t}</h3><div class="muted">{d}</div></div>', unsafe_allow_html=True)
-
-elif page == "About Project":
-    st.markdown('<div class="hero"><div class="eyebrow">ABOUT ROADGUARD AI</div><h1>Technology for <span style="color:#36d9e8">road awareness.</span></h1><p>RoadGuard AI is an academic deep-learning prototype for classifying road images into damage and no-damage categories.</p></div>', unsafe_allow_html=True)
-    x,y = st.columns(2, gap="large")
-    with x:
-        st.markdown('<div class="panel"><div class="section-kicker">PROJECT MISSION</div><h3>Support preliminary inspection</h3><div class="muted">Explore how computer vision can assist early awareness of possible road-surface damage.</div></div>', unsafe_allow_html=True)
-        st.markdown('<div class="panel"><div class="section-kicker">INTENDED USE</div><h3>Academic demonstration</h3><div class="muted">Image classification for learning, demonstration and preliminary screening.</div></div>', unsafe_allow_html=True)
-    with y:
-        st.markdown('<div class="panel"><div class="section-kicker">WHAT IT CAN DO</div><h3>Image-level classification</h3><div class="muted">Accept an image, preprocess it, predict one of two classes and display the score.</div></div>', unsafe_allow_html=True)
-        st.markdown('<div class="panel"><div class="section-kicker">CURRENT LIMITATIONS</div><h3>Not object detection</h3><div class="muted">It cannot locate a pothole, measure damage, identify damage type or certify road safety.</div></div>', unsafe_allow_html=True)
-
-elif page == "Model Information":
-    st.markdown('<div class="hero"><div class="eyebrow">MODEL CARD</div><h1>Inside the <span style="color:#36d9e8">AI model.</span></h1><p>Technical information about the deployed image classifier.</p></div>', unsafe_allow_html=True)
-    x,y = st.columns(2, gap="large")
-    with x:
-        st.markdown('<div class="panel"><div class="section-kicker">ARCHITECTURE</div><h3>MobileNetV2</h3><p>Pretrained MobileNetV2 backbone fine-tuned for binary road-image classification.</p><hr><b>Input shape</b><p class="muted">224 × 224 × 3 RGB</p><b>Output</b><p class="muted">One sigmoid score</p></div>', unsafe_allow_html=True)
-    with y:
-        st.markdown('<div class="panel"><div class="section-kicker">INFERENCE CONFIGURATION</div><h3>Runtime details</h3><b>Framework</b><p class="muted">TensorFlow / Keras</p><b>Preprocessing</b><p class="muted">MobileNetV2 preprocess_input</p><b>Decision threshold</b><p class="muted">0.50</p><b>Model file</b><p class="muted">roadguard_final.keras</p></div>', unsafe_allow_html=True)
-    st.warning("The interface assumes the model's sigmoid output corresponds to class 1 = Road Damage and class 0 = No Road Damage. Confirm this mapping against the original training labels before final submission. Model scores are not calibrated probabilities.")
-
-st.markdown('<div class="footer"><b>ROADGUARD AI</b> · DEEP LEARNING PROJECT · MOBILENETV2<br>Academic prototype — predictions should be reviewed by a human.</div>', unsafe_allow_html=True)
+.hero-foot { 
+  color: #c9eaf7; 
+  font-size: 11px; 
+  letter-spacing: 1.2px;
