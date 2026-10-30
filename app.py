@@ -23,10 +23,14 @@ MODEL_PATH = Path(__file__).parent / "roadguard_final.keras"
 THRESHOLD = 0.50
 
 ROAD_VIEWS = [
-    ("Mountain Highway", "Northern Pakistan inspired", "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2000&q=85"),
-    ("Open Road", "Scenic highway landscape", "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=85"),
-    ("Highland Route", "Mountain road landscape", "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=2000&q=85"),
-    ("Road Journey", "Open-road scenery", "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=2000&q=85"),
+    ("Lahore", "Punjab · illustrative road scene", "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2000&q=85"),
+    ("Karachi", "Sindh · illustrative road scene", "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=2000&q=85"),
+    ("Islamabad", "Capital Territory · illustrative road scene", "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=85"),
+    ("Rawalpindi", "Punjab · illustrative road scene", "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=2000&q=85"),
+    ("Peshawar", "Khyber Pakhtunkhwa · illustrative road scene", "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=2000&q=85"),
+    ("Quetta", "Balochistan · illustrative road scene", "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=2000&q=85"),
+    ("Multan", "Punjab · illustrative road scene", "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2000&q=85"),
+    ("Faisalabad", "Punjab · illustrative road scene", "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=2000&q=85"),
 ]
 if "road_view" not in st.session_state:
     st.session_state.road_view = random.randrange(len(ROAD_VIEWS))
@@ -53,40 +57,71 @@ def predict_image(image: Image.Image):
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
-:root { --bg:#172b3a; --panel:#223b4d; --panel2:#2b4659; --line:#3b596c; --cyan:#72dce5; --lime:#c8e6a0; --muted:#bdcbd4; }
-.stApp { background:radial-gradient(ellipse at 85% 0%,#35566a 0%,transparent 42%),linear-gradient(145deg,#1d3444,#172b3a 58%,#20394a); color:#f5f8fa; font-family:'DM Sans',sans-serif; }
+:root {
+  --ink:#18364a; --ink2:#274b62; --muted:#58778b;
+  --blue:#78c9e8; --blue2:#b9e7f6; --line:rgba(91,157,190,.25);
+  --glass:rgba(255,255,255,.76); --glass-strong:rgba(255,255,255,.90);
+}
+.stApp {
+  background:
+    radial-gradient(ellipse at 12% 0%,rgba(174,226,247,.72),transparent 38%),
+    radial-gradient(ellipse at 92% 16%,rgba(208,239,250,.9),transparent 35%),
+    linear-gradient(145deg,#f8fcff 0%,#eaf6fc 48%,#f5fbff 100%);
+  color:var(--ink); font-family:'DM Sans',sans-serif;
+}
 [data-testid="stHeader"] { background:transparent; }
 .block-container { max-width:1420px; padding-top:1.2rem; padding-bottom:2.8rem; }
-h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif!important; color:#f4f8fb; letter-spacing:-.6px; }
+h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif!important; color:var(--ink)!important; letter-spacing:-.6px; }
 p,li,label,span,div { font-family:'DM Sans',sans-serif; }
-div[data-testid="stMarkdownContainer"] p { color:#bdcbd6; }
-.topbar { display:flex; justify-content:space-between; align-items:center; padding:13px 18px; border:1px solid #496477; border-radius:16px; background:rgba(34,59,77,.88); margin-bottom:22px; box-shadow:0 8px 28px #07172233; }
-.brand { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:23px; color:#f5fbff; letter-spacing:-1px; }
-.brand span { color:var(--cyan); }
-.brandtag { color:#c0d0d9; font-size:10px; letter-spacing:2px; font-weight:700; margin-top:2px; }
-.status { color:#d5edb8; font-size:12px; font-weight:700; border:1px solid #68815a; background:#30483b; border-radius:30px; padding:7px 12px; }
-.hero { border:1px solid #2a5066; border-radius:24px; padding:36px 38px; min-height:285px; background-size:cover; background-position:center; position:relative; overflow:hidden; box-shadow:0 20px 60px #0005; }
-.eyebrow { color:#61e4e7; font-size:11px; font-weight:800; letter-spacing:2.2px; text-transform:uppercase; }
-.hero h1 { font-size:clamp(38px,5vw,66px); line-height:1.02; font-weight:800; margin:14px 0 12px; color:white; }
-.hero h1 span { color:var(--cyan); }
-.hero p { max-width:650px; color:#d5e4ee!important; font-size:16px; line-height:1.75; }
-.hero-foot { color:#b9d1df; font-size:11px; letter-spacing:1px; margin-top:20px; }
-.panel { background:linear-gradient(145deg,rgba(43,70,89,.98),rgba(32,57,74,.98)); border:1px solid var(--line); border-radius:19px; padding:22px; box-shadow:0 12px 35px #0002; }
-.section-kicker { color:var(--cyan); font-size:11px; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; }
+div[data-testid="stMarkdownContainer"] p { color:var(--muted); }
+.topbar {
+  display:flex; justify-content:space-between; align-items:center; padding:13px 18px;
+  border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.68);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  margin-bottom:22px; box-shadow:0 8px 28px rgba(53,117,148,.08);
+}
+.brand { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:23px; color:var(--ink); letter-spacing:-1px; }
+.brand span { color:#2699c5; }
+.brandtag { color:#648397; font-size:10px; letter-spacing:2px; font-weight:700; margin-top:2px; }
+.status { color:#23799b; font-size:12px; font-weight:700; border:1px solid #b5deed; background:#e8f7fc; border-radius:30px; padding:7px 12px; }
+.hero {
+  border:1px solid rgba(255,255,255,.65); border-radius:24px; padding:36px 38px; min-height:285px;
+  background-size:cover; background-position:center; position:relative; overflow:hidden;
+  box-shadow:0 20px 55px rgba(48,111,143,.16);
+}
+.eyebrow { color:#a8eaff; font-size:11px; font-weight:800; letter-spacing:2.2px; text-transform:uppercase; }
+.hero h1 { font-size:clamp(38px,5vw,66px); line-height:1.02; font-weight:800; margin:14px 0 12px; color:white!important; }
+.hero h1 span { color:#a8eaff; }
+.hero p { max-width:650px; color:#edf8ff!important; font-size:16px; line-height:1.75; }
+.hero-foot { color:#d6effa; font-size:11px; letter-spacing:1px; margin-top:20px; }
+.panel {
+  background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(239,249,254,.76));
+  border:1px solid rgba(111,177,207,.28); border-radius:19px; padding:22px;
+  box-shadow:0 12px 35px rgba(51,112,143,.08); backdrop-filter:blur(14px);
+}
+.section-kicker { color:#258eb8; font-size:11px; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; }
 .muted { color:var(--muted); font-size:13px; line-height:1.7; }
-.result-damage { border:1px solid #a94c4c; background:linear-gradient(135deg,#351c25,#1b1b2a); border-radius:18px; padding:22px; }
-.result-safe { border:1px solid #5b8b4d; background:linear-gradient(135deg,#1c3428,#102b2c); border-radius:18px; padding:22px; }
-div.stButton>button { border-radius:12px; min-height:45px; border:1px solid #1da9c4; background:linear-gradient(100deg,#087fae,#12b9c8); color:white; font-weight:800; transition:.2s; }
-div.stButton>button:hover { border-color:#8af4ed; color:white; transform:translateY(-1px); box-shadow:0 8px 24px #0aaac533; }
-div.stButton>button[kind="secondary"] { background:#2b4659; border:1px solid #587286; }
-[data-testid="stFileUploader"] { border:1px dashed #7796a8; border-radius:14px; background:#263f50; padding:12px; }
-[data-testid="stMetric"] { background:#2b4659; border:1px solid #526f82; border-radius:14px; padding:13px; }
-[data-testid="stMetricLabel"] { color:#a9bfce!important; }
+.result-damage { border:1px solid #efb6b6; background:linear-gradient(135deg,#fff1f1,#fffafa); border-radius:18px; padding:22px; }
+.result-safe { border:1px solid #b8dfc5; background:linear-gradient(135deg,#effaf2,#fbfffc); border-radius:18px; padding:22px; }
+div.stButton>button {
+  border-radius:12px; min-height:45px; border:1px solid #70bfdf;
+  background:linear-gradient(100deg,#5ab5dc,#8bd7ec); color:#123b52; font-weight:800; transition:.2s;
+}
+div.stButton>button:hover { border-color:#3b9fc8; color:#123b52; transform:translateY(-1px); box-shadow:0 8px 24px rgba(65,163,203,.22); }
+div.stButton>button[kind="secondary"] { background:rgba(255,255,255,.78); border:1px solid #b8dce9; color:#28546c; }
+[data-testid="stFileUploader"] {
+  border:1px dashed #8fc8df; border-radius:14px; background:rgba(255,255,255,.66);
+  padding:12px;
+}
+[data-testid="stMetric"] { background:rgba(255,255,255,.78); border:1px solid #c7e4ef; border-radius:14px; padding:13px; }
+[data-testid="stMetricLabel"] { color:#58778b!important; }
+[data-testid="stMetricValue"] { color:#18364a!important; }
 [data-testid="stImage"] img { border-radius:14px; }
 [data-testid="stRadio"] > div { gap:7px; }
-[data-testid="stRadio"] label { background:#2b4659; border:1px solid #526f82; border-radius:11px; padding:8px 13px; }
-hr { border-color:#496477; }
-.footer { text-align:center; color:#c0cdd5; border-top:1px solid #496477; padding:22px 0 5px; font-size:11px; }
+[data-testid="stRadio"] label { background:rgba(255,255,255,.76); border:1px solid #c5e2ed; border-radius:11px; padding:8px 13px; }
+[data-testid="stCaptionContainer"] p { color:#68879a!important; }
+hr { border-color:#c9e3ed; }
+.footer { text-align:center; color:#6c899b; border-top:1px solid #c9e3ed; padding:22px 0 5px; font-size:11px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -109,11 +144,11 @@ page = st.session_state.page
 if page == "Dashboard":
     view = ROAD_VIEWS[st.session_state.road_view]
     st.markdown(f"""
-    <div class="hero" style="background-image:linear-gradient(90deg,rgba(3,12,22,.96),rgba(3,12,22,.72) 58%,rgba(3,12,22,.25)),url('{view[2]}')">
+    <div class="hero" style="background-image:linear-gradient(90deg,rgba(13,43,61,.82),rgba(18,58,79,.55) 58%,rgba(20,66,88,.18)),url('{view[2]}')">
       <div class="eyebrow">✦ AI-POWERED ROAD INTELLIGENCE</div>
       <h1>Smarter roads.<br><span>Safer journeys.</span></h1>
       <p>Upload a road image and let our trained deep-learning classifier assess whether the image shows road damage.</p>
-      <div class="hero-foot">SCENIC THEME · {view[0].upper()} &nbsp; / &nbsp; {view[1].upper()}</div>
+      <div class="hero-foot">PAKISTAN CITY THEME · {view[0].upper()} &nbsp; / &nbsp; {view[1].upper()}</div>
     </div>
     """, unsafe_allow_html=True)
     ch1, ch2, _ = st.columns([1.25, 1.35, 3.4])
@@ -122,7 +157,7 @@ if page == "Dashboard":
             st.session_state.road_view = random.choice([i for i in range(len(ROAD_VIEWS)) if i != st.session_state.road_view])
             st.rerun()
     with ch2:
-        st.caption("Background is decorative only.")
+        st.caption("City labels are Pakistan-focused themes; background photos are illustrative, not verified photos from those cities.")
     st.markdown("")
     st.markdown('<div class="section-kicker">01 / IMAGE INSPECTION</div>', unsafe_allow_html=True)
     left, right = st.columns([1, 1.08], gap="large")
